@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Apex Auto Lab — premium automotive detailing, paint correction, ceramic protection and interior restoration.">
+<title>APEX AUTO LAB — Automotive Detailing</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#08090a;
+  --surface:#101214;
+  --surface2:#151719;
+  --text:#f3f1eb;
+  --muted:#9a9b9d;
+  --line:rgba(255,255,255,.11);
+  --accent:#d8ff42;
+  --max:1280px;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;
+  overflow-x:hidden;line-height:1.5;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:999;
+  opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+}
+a{text-decoration:none;color:inherit}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+img{display:block;width:100%;object-fit:cover}
+.container{width:min(calc(100% - 48px),var(--max));margin:auto}
+.mono{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted)}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--accent);z-index:1001}
+.cursor,.cursor-dot{position:fixed;pointer-events:none;z-index:2000;transform:translate(-50%,-50%);display:none}
+.cursor{width:34px;height:34px;border:1px solid rgba(216,255,66,.75);border-radius:50%;transition:width .25s,height .25s,border-color .25s}
+.cursor-dot{width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.cursor.active{width:70px;height:70px;background:rgba(216,255,66,.06)}
+.cursor.active:after{content:"VIEW";position:absolute;inset:0;display:grid;place-items:center;font:10px "DM Mono";color:var(--accent)}
+
+nav{
+  position:fixed;top:0;left:0;width:100%;z-index:100;
+  border-bottom:1px solid transparent;transition:.5s var(--ease);
+}
+nav.scrolled{background:rgba(8,9,10,.82);backdrop-filter:blur(18px);border-color:var(--line)}
+.nav-inner{height:82px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:800;letter-spacing:-.06em;font-size:21px}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:12px;color:#bfc0c1;transition:.25s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.btn{
+  border:1px solid var(--line);background:transparent;color:var(--text);
+  padding:13px 19px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;
+  transition:.35s var(--ease);position:relative;overflow:hidden;
+}
+.btn:before{content:"";position:absolute;inset:0;background:var(--accent);transform:translateY(101%);transition:.35s var(--ease);z-index:-1}
+.btn:hover{color:#08090a;border-color:var(--accent)}
+.btn:hover:before{transform:translateY(0)}
+.btn.primary{background:var(--accent);color:#08090a;border-color:var(--accent)}
+.btn.primary:before{background:#fff}
+.menu{display:none;background:none;border:0;color:var(--text);font-size:24px}
+
+.hero{min-height:100svh;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+.hero-media{position:absolute;inset:0}
+.hero-media img{height:100%;filter:brightness(.48) saturate(.75);transform:scale(1.06);animation:heroZoom 10s var(--ease) forwards}
+@keyframes heroZoom{to{transform:scale(1)}}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.35) 45%,#08090a 100%)}
+.hero-grid{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;padding-top:82px}
+.hero-side{border-left:1px solid rgba(255,255,255,.08);margin-left:50%;opacity:.55}
+.hero-content{position:relative;padding-bottom:75px;max-width:980px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:24px;animation:rise .9s .1s both var(--ease)}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent)}
+.hero h1{
+  font-size:clamp(58px,10vw,145px);line-height:.82;letter-spacing:-.085em;
+  max-width:1050px;animation:rise 1s .2s both var(--ease)
+}
+.hero h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(243,241,235,.75)}
+.hero-copy{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-top:38px;animation:rise 1s .35s both var(--ease)}
+.hero-copy p{max-width:430px;color:#c2c2c0;font-size:14px}
+.hero-actions{display:flex;gap:10px}
+.hero-bottom{position:absolute;bottom:25px;left:0;right:0;display:flex;justify-content:space-between}
+.scroll{display:flex;align-items:center;gap:12px}.scroll i{width:35px;height:1px;background:var(--accent)}
+@keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:17px 0}
+.marquee-track{display:inline-flex;animation:marquee 24s linear infinite}
+.marquee span{font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin:0 25px;color:#c5c6c6}
+.marquee b{color:var(--accent);font-weight:400}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+section{padding:125px 0}
+.section-head{display:flex;justify-content:space-between;gap:30px;margin-bottom:55px}
+.section-title{font-size:clamp(42px,6vw,78px);line-height:.92;letter-spacing:-.065em;max-width:720px}
+.section-title span{color:var(--muted)}
+.section-note{max-width:300px;color:var(--muted);font-size:13px;align-self:end}
+
+.stats{padding:60px 0;border-bottom:1px solid var(--line)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+.stat{background:var(--bg);padding:25px 20px;min-height:145px}
+.stat strong{font-size:45px;letter-spacing:-.06em;font-weight:600;display:block;margin-bottom:15px}
+.stat p{color:var(--muted);font:11px "DM Mono";text-transform:uppercase;letter-spacing:.1em}
+
+.services-grid{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line)}
+.service{
+  min-height:260px;border-bottom:1px solid var(--line);padding:28px 20px 25px 0;
+  display:grid;grid-template-columns:60px 1fr auto;gap:15px;position:relative;overflow:hidden;
+  transition:.4s var(--ease)
+}
+.service:nth-child(odd){padding-right:45px;border-right:1px solid var(--line)}
+.service:nth-child(even){padding-left:45px}
+.service:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(216,255,66,.07),transparent 65%);transform:translateX(-100%);transition:.5s var(--ease)}
+.service:hover:after{transform:none}
+.service:hover .service-arrow{transform:translate(5px,-5px);color:var(--accent)}
+.service-num{font:11px "DM Mono";color:var(--muted)}
+.service h3{font-size:30px;letter-spacing:-.04em;margin-bottom:10px;position:relative;z-index:1}
+.service p{color:var(--muted);font-size:13px;max-width:430px;position:relative;z-index:1}
+.service-arrow{font-size:25px;transition:.3s;position:relative;z-index:1}
+
+.visual-story{height:75vh;min-height:520px;position:relative;overflow:hidden}
+.visual-story img{height:100%;filter:brightness(.55);transition:transform 1s var(--ease)}
+.visual-story:hover img{transform:scale(1.035)}
+.story-content{position:absolute;inset:0;display:flex;align-items:flex-end;padding:50px}
+.story-content h2{font-size:clamp(48px,8vw,110px);letter-spacing:-.08em;line-height:.85;max-width:850px}
+.story-content p{max-width:330px;color:#ddd;margin-left:auto}
+
+.work-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px}
+.filter{border:1px solid var(--line);background:transparent;color:var(--muted);padding:10px 14px;font:10px "DM Mono";text-transform:uppercase;letter-spacing:.1em;transition:.25s}
+.filter.active,.filter:hover{background:var(--accent);border-color:var(--accent);color:#08090a}
+.work-grid{display:grid;grid-template-columns:1.15fr .85fr 1fr;grid-auto-rows:330px;gap:8px}
+.work-item{position:relative;overflow:hidden;background:#111;cursor:pointer}
+.work-item:nth-child(2){grid-row:span 2}.work-item:nth-child(5){grid-column:span 2}
+.work-item img{height:100%;transition:transform .8s var(--ease);filter:saturate(.75)}
+.work-item:hover img{transform:scale(1.07)}
+.work-overlay{position:absolute;inset:auto 0 0;padding:22px;background:linear-gradient(transparent,rgba(0,0,0,.85));display:flex;justify-content:space-between;align-items:end}
+.work-overlay small{font:10px "DM Mono";color:var(--accent);display:block;margin-bottom:5px}
+.work-overlay strong{font-size:18px}
+.hidden{display:none!important}
+
+.artist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.artist{position:relative;overflow:hidden;min-height:530px}
+.artist img{height:100%;filter:grayscale(.8);transition:.8s var(--ease)}
+.artist:hover img{filter:grayscale(0);transform:scale(1.04)}
+.artist-info{position:absolute;left:0;right:0;bottom:0;padding:28px;background:linear-gradient(transparent,rgba(0,0,0,.9))}
+.artist-info h3{font-size:28px;letter-spacing:-.05em}
+.artist-info p{color:#bbb;font-size:12px;margin:3px 0 15px}
+.artist-info a{font:10px "DM Mono";color:var(--accent);text-transform:uppercase}
+
+.process{border-top:1px solid var(--line)}
+.process-row{display:grid;grid-template-columns:100px 1fr 1fr;align-items:center;min-height:145px;border-bottom:1px solid var(--line);transition:.4s;padding:0 20px}
+.process-row:hover{background:var(--surface)}
+.process-row .num{font:12px "DM Mono";color:var(--accent)}
+.process-row h3{font-size:32px;letter-spacing:-.05em}
+.process-row p{color:var(--muted);font-size:13px;max-width:360px}
+
+.protection{background:var(--surface);padding:0;overflow:hidden}
+.protection-grid{display:grid;grid-template-columns:1fr 1fr;min-height:620px}
+.protection-img img{height:100%;filter:saturate(.7)}
+.protection-copy{padding:70px;display:flex;flex-direction:column;justify-content:center}
+.protection-copy h2{font-size:clamp(45px,5vw,75px);line-height:.9;letter-spacing:-.07em;margin:15px 0 25px}
+.checks{margin-top:25px;border-top:1px solid var(--line)}
+.check{padding:16px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-size:12px}
+.check span:last-child{color:var(--accent)}
+
+.testimonials{background:#0c0e0f}
+.quote-wrap{max-width:920px}
+.quote{font-size:clamp(34px,5vw,65px);line-height:1.02;letter-spacing:-.055em}
+.quote-mark{color:var(--accent)}
+.quote-meta{margin-top:35px;color:var(--muted);font:11px "DM Mono";text-transform:uppercase}
+
+.faq{max-width:900px}
+.faq-item{border-top:1px solid var(--line)}
+.faq-item:last-child{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;background:none;border:0;color:var(--text);display:flex;justify-content:space-between;text-align:left;padding:23px 0;font-size:17px}
+.faq-q span:last-child{font-size:23px;color:var(--accent);transition:.3s}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease);color:var(--muted);font-size:13px}
+.faq-a p{padding:0 40px 22px 0}
+.faq-item.open .faq-q span:last-child{transform:rotate(45deg)}
+.faq-item.open .faq-a{max-height:150px}
+
+.booking{padding:100px 0;background:var(--accent);color:#08090a}
+.booking-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.booking h2{font-size:clamp(55px,8vw,105px);line-height:.84;letter-spacing:-.08em}
+.booking p{max-width:400px;margin-top:25px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+.field{background:transparent;border:1px solid rgba(8,9,10,.3);padding:15px;color:#08090a;outline:none}
+.field::placeholder{color:rgba(8,9,10,.6)}
+.field.full{grid-column:1/-1}
+select.field{appearance:none}
+.form .btn{border-color:#08090a;color:#08090a;margin-top:4px}
+.form .btn:before{background:#08090a}.form .btn:hover{color:var(--accent)}
+
+footer{padding:80px 0 25px}
+.footer-top{display:flex;justify-content:space-between;gap:40px;padding-bottom:75px}
+.footer-brand h2{font-size:clamp(55px,9vw,125px);line-height:.8;letter-spacing:-.09em}
+.footer-brand p{color:var(--muted);max-width:330px;margin-top:30px}
+.footer-links{display:grid;grid-template-columns:repeat(2,130px);gap:35px}
+.footer-links a{font-size:12px;color:var(--muted);margin-bottom:10px;display:block}
+.footer-links a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;color:#666;font:10px "DM Mono";text-transform:uppercase}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(12px);z-index:500;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;transition:.35s}
+.modal.open{opacity:1;visibility:visible}
+.modal-card{background:#111416;border:1px solid var(--line);width:min(760px,100%);max-height:90vh;overflow:auto;padding:35px;transform:translateY(25px);transition:.5s var(--ease)}
+.modal.open .modal-card{transform:none}
+.modal-head{display:flex;justify-content:space-between;margin-bottom:25px}
+.close{background:none;border:0;color:var(--text);font-size:28px}
+.steps{display:flex;gap:5px;margin-bottom:28px}
+.step{height:3px;flex:1;background:#292c2e}.step.active{background:var(--accent)}
+.modal h3{font-size:30px;letter-spacing:-.05em;margin-bottom:20px}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choice{padding:25px 15px;border:1px solid var(--line);background:none;color:var(--text);text-align:left;transition:.25s}
+.choice:hover,.choice.selected{border-color:var(--accent);background:rgba(216,255,66,.06)}
+.choice strong{display:block;margin-bottom:7px}.choice small{color:var(--muted)}
+.modal-actions{display:flex;justify-content:space-between;margin-top:30px}
+
+.mobile-nav{position:fixed;inset:0;background:#08090a;z-index:90;padding:110px 24px 30px;transform:translateX(100%);transition:.55s var(--ease)}
+.mobile-nav.open{transform:none}
+.mobile-nav a{display:block;font-size:42px;letter-spacing:-.06em;border-bottom:1px solid var(--line);padding:13px 0}
+
+.reveal{opacity:0;transform:translateY(35px);transition:1s var(--ease)}
+.reveal.visible{opacity:1;transform:none}
+
+@media (pointer:fine){.cursor,.cursor-dot{display:block}}
+@media(max-width:900px){
+  .container{width:min(calc(100% - 34px),var(--max))}
+  .nav-links,.nav-cta{display:none}.menu{display:block}
+  .hero h1{font-size:clamp(58px,16vw,105px)}
+  .hero-copy{display:block}.hero-actions{margin-top:24px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .services-grid{grid-template-columns:1fr}
+  .service:nth-child(odd){padding-right:20px;border-right:0}
+  .service:nth-child(even){padding-left:0}
+  .work-grid{grid-template-columns:1fr 1fr;grid-auto-rows:260px}
+  .work-item:nth-child(2){grid-row:span 1}.work-item:nth-child(5){grid-column:span 1}
+  .artist-grid{grid-template-columns:1fr}
+  .artist{min-height:520px}
+  .protection-grid,.booking-grid{grid-template-columns:1fr}
+  .protection-img{height:430px}.protection-copy{padding:50px 25px}
+  .process-row{grid-template-columns:60px 1fr;gap:15px;padding:25px 0}
+  .process-row p{grid-column:2}
+  .footer-top{display:block}.footer-links{margin-top:45px}
+}
+@media(max-width:600px){
+  section{padding:85px 0}
+  .container{width:calc(100% - 28px)}
+  .nav-inner{height:70px}
+  .hero-grid{display:none}.hero-content{padding-bottom:80px}
+  .hero-copy p{font-size:13px}
+  .hero-bottom{bottom:15px}.hero-bottom .mono:last-child{display:none}
+  .section-head{display:block}.section-note{margin-top:20px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat strong{font-size:34px}
+  .service{min-height:220px}
+  .work-grid{grid-template-columns:1fr;grid-auto-rows:350px}
+  .work-item:nth-child(2){grid-row:auto}
+  .work-item:nth-child(5){grid-column:auto}
+  .story-content{padding:25px;display:block;padding-top:55%}
+  .story-content p{margin:25px 0 0}
+  .form{grid-template-columns:1fr}.field.full{grid-column:auto}
+  .choice-grid{grid-template-columns:1fr}
+  .footer-bottom{display:block;line-height:2}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .marquee-track{animation:none}
+}
+</style>
+</head>
+
+<body>
+<div class="progress"></div>
+<div class="cursor"></div><div class="cursor-dot"></div>
+
+<nav id="nav">
+  <div class="container nav-inner">
+    <a href="#home" class="logo">APEX<span>.</span>LAB</a>
+    <div class="nav-links">
+      <a href="#services">Services</a><a href="#work">Work</a><a href="#artists">Team</a>
+      <a href="#process">Process</a><a href="#faq">FAQ</a>
+    </div>
+    <button class="btn primary nav-cta" data-book>Book a Detail</button>
+    <button class="menu" id="menuBtn" aria-label="Open menu">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#services">Services</a><a href="#work">Work</a><a href="#artists">Team</a>
+  <a href="#process">Process</a><a href="#faq">FAQ</a>
+  <button class="btn primary" style="margin-top:28px" data-book>Book a Detail</button>
+</div>
+
+<main id="home">
+<section class="hero">
+  <div class="hero-media">
+    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2200&q=85" alt="Premium sports car">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-grid"><div></div><div class="hero-side"></div></div>
+  <div class="container hero-content">
+    <div class="eyebrow mono"><i></i> Automotive detailing / Est. 2014</div>
+    <h1>DETAIL<br><em>WITHOUT</em><br>COMPROMISE.</h1>
+    <div class="hero-copy">
+      <p>Precision detailing for people who care about the finish. Paint correction, ceramic protection and interior restoration — executed with obsessive attention to detail.</p>
+      <div class="hero-actions">
+        <button class="btn primary" data-book>Start a consultation</button>
+        <a href="#work" class="btn">Explore the work</a>
+      </div>
+    </div>
+  </div>
+  <div class="container hero-bottom">
+    <div class="scroll mono"><i></i> Scroll to explore</div>
+    <div class="mono">Open today · 08:00 — 19:00</div>
+  </div>
+</section>
+
+<div class="marquee"><div class="marquee-track">
+  <span>Paint correction <b>✦</b></span><span>Ceramic coating <b>✦</b></span><span>Interior restoration <b>✦</b></span><span>Premium wash <b>✦</b></span><span>Paint correction <b>✦</b></span><span>Ceramic coating <b>✦</b></span><span>Interior restoration <b>✦</b></span><span>Premium wash <b>✦</b></span>
+</div></div>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat reveal"><strong data-count="12">0</strong><p>Years refining the craft</p></div>
+    <div class="stat reveal"><strong data-count="4800">0</strong><p>Vehicles completed</p></div>
+    <div class="stat reveal"><strong data-count="98">0</strong><p>Repeat client rate %</p></div>
+    <div class="stat reveal"><strong data-count="5">0</strong><p>Star client experience</p></div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="mono">01 / Services</div><h2 class="section-title">THE FINISH<br><span>IS EVERYTHING.</span></h2></div>
+      <p class="section-note">Every service is built around the condition, material and intended use of your vehicle — not a one-size-fits-all package.</p>
+    </div>
+    <div class="services-grid">
+      <article class="service reveal"><div class="service-num">01</div><div><h3>Paint Correction</h3><p>Multi-stage machine polishing to refine swirls, haze and surface imperfections while restoring depth and clarity.</p></div><div class="service-arrow">↗</div></article>
+      <article class="service reveal"><div class="service-num">02</div><div><h3>Ceramic Protection</h3><p>Long-term surface protection designed to make maintenance easier while enhancing gloss and visual depth.</p></div><div class="service-arrow">↗</div></article>
+      <article class="service reveal"><div class="service-num">03</div><div><h3>Exterior Detail</h3><p>Careful decontamination, contact washing, wheel treatment and finishing for a crisp, show-ready exterior.</p></div><div class="service-arrow">↗</div></article>
+      <article class="service reveal"><div class="service-num">04</div><div><h3>Interior Restoration</h3><p>Deep cleaning and meticulous finishing for leather, fabric, plastics, glass and high-touch surfaces.</p></div><div class="service-arrow">↗</div></article>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="container">
+    <div class="visual-story reveal">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2000&q=85" alt="Detailed luxury sports car">
+      <div class="story-content">
+        <div><div class="mono">Our philosophy</div><h2>CRAFT<br>OVER<br>QUICK FIXES.</h2></div>
+        <p>We would rather spend longer getting the surface right than rush a finish that looks good for a week.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="mono">02 / Selected work</div><h2 class="section-title">SURFACE.<br><span>TRANSFORMED.</span></h2></div>
+      <p class="section-note">A selection of correction, protection and restoration projects from the studio.</p>
+    </div>
+    <div class="work-filter">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="correction">Correction</button>
+      <button class="filter" data-filter="ceramic">Ceramic</button>
+      <button class="filter" data-filter="interior">Interior</button>
+    </div>
+    <div class="work-grid" id="workGrid">
+      <div class="work-item" data-cat="correction"><img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=82" alt="Luxury car exterior"><div class="work-overlay"><div><small>Paint correction</small><strong>Graphite 911</strong></div><span>↗</span></div></div>
+      <div class="work-item" data-cat="ceramic"><img src="https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=1200&q=82" alt="Black sports car"><div class="work-overlay"><div><small>Ceramic coating</small><strong>Obsidian GT</strong></div><span>↗</span></div></div>
+      <div class="work-item" data-cat="interior"><img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=82" alt="Premium vehicle detail"><div class="work-overlay"><div><small>Interior</small><strong>Alcantara / Black</strong></div><span>↗</span></div></div>
+      <div class="work-item" data-cat="correction"><img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=82" alt="Performance car"><div class="work-overlay"><div><small>Correction</small><strong>Silverline</strong></div><span>↗</span></div></div>
+      <div class="work-item" data-cat="ceramic"><img src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=82" alt="Car close-up"><div class="work-overlay"><div><small>Protection</small><strong>Midnight Finish</strong></div><span>↗</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="artists">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="mono">03 / The team</div><h2 class="section-title">PEOPLE<br><span>BEHIND THE POLISH.</span></h2></div>
+      <p class="section-note">A small team of trained detailers. No assembly line. Your vehicle stays with one lead detailer from inspection to handover.</p>
+    </div>
+    <div class="artist-grid">
+      <article class="artist reveal"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80" alt="Automotive detail specialist"><div class="artist-info"><h3>ARLO</h3><p>Paint correction / ceramic</p><a href="#booking">View specialist →</a></div></article>
+      <article class="artist reveal"><img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1100&q=80" alt="Detailing team member"><div class="artist-info"><h3>NOAH</h3><p>Interior / restoration</p><a href="#booking">View specialist →</a></div></article>
+      <article class="artist reveal"><img src="https://images.unsplash.com/photo-1503736762-4b1c0c3b2e5b?auto=format&fit=crop&w=1100&q=80" alt="Automotive specialist"><div class="artist-info"><h3>REY</h3><p>Exterior / finishing</p><a href="#booking">View specialist →</a></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="protection">
+  <div class="protection-grid">
+    <div class="protection-img"><img src="https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=1600&q=85" alt="Professional car detailing equipment"></div>
+    <div class="protection-copy reveal">
+      <div class="mono">04 / Protection</div>
+      <h2>BUILT TO<br>LAST.</h2>
+      <p style="color:var(--muted);max-width:440px">Protection is not about chasing a temporary shine. We prepare the surface correctly first, then select a protection system based on how the vehicle is actually used.</p>
+      <div class="checks">
+        <div class="check"><span>Paint preparation</span><span>01</span></div>
+        <div class="check"><span>Surface decontamination</span><span>02</span></div>
+        <div class="check"><span>Coating application</span><span>03</span></div>
+        <div class="check"><span>Final inspection</span><span>04</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="mono">05 / Process</div><h2 class="section-title">NO GUESSWORK.<br><span>JUST PROCESS.</span></h2></div>
+    </div>
+    <div class="process">
+      <div class="process-row reveal"><div class="num">01</div><h3>Inspect</h3><p>We assess paint condition, interior materials, previous protection and your expectations.</p></div>
+      <div class="process-row reveal"><div class="num">02</div><h3>Prepare</h3><p>The vehicle is safely cleaned and decontaminated before any correction or protection begins.</p></div>
+      <div class="process-row reveal"><div class="num">03</div><h3>Refine</h3><p>Correction and restoration work is performed in controlled stages with inspection between each stage.</p></div>
+      <div class="process-row reveal"><div class="num">04</div><h3>Protect</h3><p>Final protection, finishing and quality control prepare the vehicle for handover.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="container">
+    <div class="mono">06 / Client experience</div>
+    <div class="quote-wrap reveal" style="margin-top:35px">
+      <div class="quote"><span class="quote-mark">“</span> The difference was immediately visible. More importantly, the team explained exactly what the paint needed instead of trying to sell me everything.</div>
+      <div class="quote-meta">JORDAN M. / CERAMIC PROTECTION / VERIFIED CLIENT</div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="mono">07 / FAQ</div><h2 class="section-title">GOOD TO<br><span>KNOW.</span></h2></div>
+    </div>
+    <div class="faq">
+      <div class="faq-item"><button class="faq-q">How long does a detail take?<span>+</span></button><div class="faq-a"><p>It depends on the vehicle and selected service. During consultation we provide a realistic time estimate based on its condition.</p></div></div>
+      <div class="faq-item"><button class="faq-q">Do you offer ceramic coating?<span>+</span></button><div class="faq-a"><p>Yes. Ceramic protection is available after the appropriate preparation and paint correction assessment.</p></div></div>
+      <div class="faq-item"><button class="faq-q">Can you remove scratches?<span>+</span></button><div class="faq-a"><p>Some defects can be reduced or removed through paint correction. We inspect the surface first and explain what is realistically achievable.</p></div></div>
+      <div class="faq-item"><button class="faq-q">Do you accept walk-ins?<span>+</span></button><div class="faq-a"><p>Appointments are recommended so the correct amount of time can be reserved for your vehicle.</p></div></div>
+      <div class="faq-item"><button class="faq-q">How do I get a quote?<span>+</span></button><div class="faq-a"><p>Use the consultation form below. Vehicle type, condition, requested service and photos can be discussed before your appointment.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="booking" id="booking">
+  <div class="container booking-grid">
+    <div>
+      <div class="mono" style="color:#08090a">08 / Booking</div>
+      <h2>LET'S<br>DETAIL<br>IT.</h2>
+      <p>Tell us about the vehicle and what you want to achieve. This front-end form is ready to connect to your booking API, email service or CRM.</p>
+    </div>
+    <form class="form" id="bookingForm">
+      <input class="field" placeholder="Your name" required>
+      <input class="field" type="email" placeholder="Email address" required>
+      <input class="field" placeholder="Vehicle / model" required>
+      <select class="field" required><option value="">Service</option><option>Paint correction</option><option>Ceramic protection</option><option>Exterior detail</option><option>Interior restoration</option></select>
+      <textarea class="field full" rows="5" placeholder="Tell us about the vehicle..." required></textarea>
+      <button class="btn full" type="submit">Request consultation ↗</button>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="mono">APEX AUTO LAB</div>
+        <h2>KEEP IT<br>SHARP.</h2>
+        <p>Premium automotive detailing for vehicles that deserve more than a quick wash.</p>
+      </div>
+      <div class="footer-links">
+        <div><div class="mono" style="margin-bottom:14px">Navigate</div><a href="#services">Services</a><a href="#work">Work</a><a href="#artists">Team</a><a href="#process">Process</a></div>
+        <div><div class="mono" style="margin-bottom:14px">Studio</div><a href="#booking">Book</a><a href="#">Instagram</a><a href="#faq">FAQ</a><a href="#">Privacy</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Apex Auto Lab</span><span>Precision / Protection / Finish</span></div>
+  </div>
+</footer>
+
+<div class="modal" id="bookModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <div class="modal-head"><div class="mono">Consultation / <span id="modalStepText">01</span></div><button class="close" id="closeModal" aria-label="Close">×</button></div>
+    <div class="steps"><i class="step active"></i><i class="step"></i><i class="step"></i></div>
+    <div id="modalBody">
+      <h3 id="modalTitle">What are we detailing?</h3>
+      <div class="choice-grid">
+        <button class="choice" data-choice="Exterior detail"><strong>Exterior</strong><small>Wash + finish</small></button>
+        <button class="choice" data-choice="Paint correction"><strong>Correction</strong><small>Refine the paint</small></button>
+        <button class="choice" data-choice="Ceramic protection"><strong>Protection</strong><small>Long-term finish</small></button>
+      </div>
+    </div>
+    <div class="modal-actions"><button class="btn" id="modalBack" style="visibility:hidden">Back</button><button class="btn primary" id="modalNext">Continue</button></div>
+  </div>
+</div>
+
+<script>
+const nav=document.getElementById('nav');
+const progress=document.querySelector('.progress');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',scrollY>40);
+  const max=document.documentElement.scrollHeight-innerHeight;
+  progress.style.width=(scrollY/max*100)+'%';
+  document.querySelectorAll('section[id]').forEach(s=>{
+    const r=s.getBoundingClientRect();
+    const link=document.querySelector('.nav-links a[href="#'+s.id+'"]');
+    if(link) link.classList.toggle('active',r.top<180&&r.bottom>180);
+  });
+},{passive:true});
+
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+document.querySelectorAll('[data-count]').forEach(el=>{
+  const obs=new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting)return;
+    const target=+el.dataset.count, duration=1200, start=performance.now();
+    function tick(now){
+      const p=Math.min((now-start)/duration,1), eased=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*eased).toLocaleString()+(target===98?'%':target===5?'★':'+');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);obs.disconnect();
+  });obs.observe(el);
+});
+
+document.querySelectorAll('.filter').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+    const f=btn.dataset.filter;
+    document.querySelectorAll('.work-item').forEach(item=>{
+      item.classList.toggle('hidden',f!=='all'&&item.dataset.cat!==f);
+    });
+  });
+});
+
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>q.parentElement.classList.toggle('open'));
+});
+
+const menu=document.getElementById('menuBtn'), mobile=document.getElementById('mobileNav');
+menu.addEventListener('click',()=>mobile.classList.toggle('open'));
+mobile.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mobile.classList.remove('open')));
+
+const modal=document.getElementById('bookModal'), modalNext=document.getElementById('modalNext'), modalBack=document.getElementById('modalBack');
+let modalStep=1, selectedService='';
+function openModal(){modal.classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){modal.classList.remove('open');document.body.style.overflow='';modalStep=1;renderStep();}
+document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',openModal));
+document.getElementById('closeModal').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+
+function renderStep(){
+  document.getElementById('modalStepText').textContent=String(modalStep).padStart(2,'0');
+  document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('active',i<modalStep));
+  modalBack.style.visibility=modalStep>1?'visible':'hidden';
+  if(modalStep===1){
+    document.getElementById('modalTitle').textContent='What are we detailing?';
+    document.getElementById('modalBody').innerHTML=`<h3 id="modalTitle">What are we detailing?</h3><div class="choice-grid">
+      <button class="choice" data-choice="Exterior detail"><strong>Exterior</strong><small>Wash + finish</small></button>
+      <button class="choice" data-choice="Paint correction"><strong>Correction</strong><small>Refine the paint</small></button>
+      <button class="choice" data-choice="Ceramic protection"><strong>Protection</strong><small>Long-term finish</small></button></div>`;
+    document.querySelectorAll('[data-choice]').forEach(c=>c.addEventListener('click',()=>{selectedService=c.dataset.choice;document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));c.classList.add('selected')}));
+    modalNext.textContent='Continue';
+  }else if(modalStep===2){
+    document.getElementById('modalBody').innerHTML=`<h3>Tell us about the vehicle.</h3><div class="form" style="grid-template-columns:1fr 1fr">
+      <input class="field" id="mName" placeholder="Your name"><input class="field" id="mVehicle" placeholder="Vehicle / model">
+      <input class="field full" id="mEmail" type="email" placeholder="Email address">
+      <textarea class="field full" id="mDetails" rows="4" placeholder="Condition, goals, preferred timing..."></textarea></div>`;
+    modalNext.textContent='Review';
+  }else{
+    document.getElementById('modalBody').innerHTML=`<h3>Request ready.</h3><p style="color:var(--muted);font-size:14px">Service: <b style="color:var(--text)">${selectedService||'Detail consultation'}</b><br><br>Your request is prepared as a front-end demo. Connect the submit action to your preferred booking/email backend to receive real appointments.</p>`;
+    modalNext.textContent='Submit request';
+  }
+}
+modalNext.addEventListener('click',()=>{
+  if(modalStep===1&&!selectedService){alert('Please choose a service.');return}
+  if(modalStep<3){modalStep++;renderStep()}else{alert('Demo request submitted. Connect your backend to make this live.');closeModal()}
+});
+modalBack.addEventListener('click',()=>{if(modalStep>1){modalStep--;renderStep()}});
+renderStep();
+
+document.getElementById('bookingForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const btn=e.target.querySelector('button');btn.textContent='Request received ✓';
+  setTimeout(()=>btn.textContent='Request consultation ↗',2200);e.target.reset();
+});
+
+const cursor=document.querySelector('.cursor'),dot=document.querySelector('.cursor-dot');
+if(matchMedia('(pointer:fine)').matches){
+  let x=innerWidth/2,y=innerHeight/2,dx=x,dy=y;
+  addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;dot.style.left=x+'px';dot.style.top=y+'px'});
+  function loop(){dx+=(x-dx)*.14;dy+=(y-dy)*.14;cursor.style.left=dx+'px';cursor.style.top=dy+'px';requestAnimationFrame(loop)}loop();
+  document.querySelectorAll('a,button,.work-item,.service,.artist').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('active'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('active'));
+  });
+}
+</script>
+</body>
+</html>
